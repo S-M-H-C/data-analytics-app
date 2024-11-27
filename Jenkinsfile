@@ -17,6 +17,17 @@ pipeline {
                 }
             }
         }
+        stage('Setup Minikube Environment') {
+            steps {
+                script {
+                    sh '''
+                        minikube delete
+                        minikube start --cpus=4 --memory=4096
+                        kubectl config use-context minikube
+                    '''
+                }
+            }
+        }
         stage('Test') {
             steps {
                 script {
@@ -32,7 +43,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        . venv/bin/activate
+                        eval $(minikube docker-env)
                         docker build -t my-python-app:latest .
                     '''
                 }
@@ -42,9 +53,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        minikube delete
-                        minikube start --cpus=4 --memory=4096
-                        kubectl config use-context minikube
                         . venv/bin/activate
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
