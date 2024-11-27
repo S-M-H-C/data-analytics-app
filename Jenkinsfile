@@ -42,6 +42,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        minikube delete
                         minikube start --cpus=4 --memory=4096
                         kubectl config use-context minikube
                         . venv/bin/activate
