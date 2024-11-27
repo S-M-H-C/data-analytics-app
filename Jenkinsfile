@@ -42,6 +42,8 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        minikube start
+                        kubectl config use-context minikube
                         . venv/bin/activate
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
