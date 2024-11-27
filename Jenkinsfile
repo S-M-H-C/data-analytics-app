@@ -6,6 +6,9 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        if [ -d "venv" ]; then
+                            rm -rf venv
+                        fi
                         python3 -m venv venv
                         . venv/bin/activate
                         pip install --upgrade pip
@@ -41,6 +44,7 @@ pipeline {
                     sh '''
                         . venv/bin/activate
                         kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
                     '''
                 }
             }
