@@ -7,7 +7,7 @@ pipeline {
                 script {
                     sh '''
                         python3 -m venv venv
-                        source venv/bin/activate
+                        . venv/bin/activate
                         pip install --upgrade pip
                         pip install -r requirements.txt
                     '''
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         export PYTHONPATH=$PYTHONPATH:$(pwd)/..
                         pytest tests/test_analysis.py
                     '''
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         docker build -t my-python-app:latest .
                     '''
                 }
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         kubectl apply -f k8s/deployment.yaml
                     '''
                 }
