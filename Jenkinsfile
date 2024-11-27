@@ -43,19 +43,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        eval $(minikube docker-env)
+                        eval $(minikube -p minikube docker-env)
                         docker build -t my-python-app:latest .
-                    '''
-                }
-            }
-        }
-        stage('Deploy to Minikube') {
-            steps {
-                script {
-                    sh '''
-                        . venv/bin/activate
-                        kubectl apply -f k8s/deployment.yaml
-                        kubectl apply -f k8s/service.yaml
+                        minikube image load my-python-app:latest
                     '''
                 }
             }
@@ -66,7 +56,17 @@ pipeline {
                     sh '''
                         MINIKUBE_IP=$(minikube ip)
                         NODE_PORT=$(kubectl get svc myapp-service -o=jsonpath='{.spec.ports[0].nodePort}')
-                        echo "Application is accessible at http://$MINIKUBE_IP:$NODE_PORT"
+                        echo "Application is accessible on the cluster at http://$MINIKUBE_IP:$NODE_PORT"
+                    '''
+                }
+            }
+        }
+        stage('Port Forwarding') {
+            steps {
+                script {
+                    sh '''
+                        kubectl port-forward svc/myapp-service 8081:80 > /dev/null 2>&1 &
+                        echo "Application is accessible locally at http://localhost:8081"
                     '''
                 }
             }

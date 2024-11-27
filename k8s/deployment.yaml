@@ -15,5 +15,6 @@ spec:
       containers:
       - name: myapp
         image: my-python-app:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
