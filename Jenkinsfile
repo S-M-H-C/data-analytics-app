@@ -1,47 +1,46 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = 'data-analytics-app:latest'
-    }
-
     stages {
         stage('Build') {
             steps {
                 script {
-                    sh 'pip install -r requirements.txt'
+                    sh '''
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                    '''
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    sh 'pytest'
+                    sh '''
+                        source venv/bin/activate
+                        pytest
+                    '''
                 }
             }
         }
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}")
+                    sh '''
+                        source venv/bin/activate
+                        docker build -t my-python-app:latest .
+                    '''
                 }
             }
         }
         stage('Deploy to Minikube') {
             steps {
                 script {
-                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh '''
+                        source venv/bin/activate
+                        kubectl apply -f k8s/deployment.yaml
+                    '''
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
