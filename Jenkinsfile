@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        minikube start
+                        minikube start --cpus=4 --memory=4096
                         kubectl config use-context minikube
                         . venv/bin/activate
                         kubectl apply -f k8s/deployment.yaml
