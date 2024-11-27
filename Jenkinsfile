@@ -50,6 +50,17 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Minikube') {
+            steps {
+                script {
+                    sh '''
+                        . venv/bin/activate
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                    '''
+                }
+            }
+        }
         stage('Get Minikube IP and Port') {
             steps {
                 script {
