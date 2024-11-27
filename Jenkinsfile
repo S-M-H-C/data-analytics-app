@@ -2,11 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Setup Python Environment') {
             steps {
                 script {
                     sh '''
+                        python3 -m venv venv
                         source venv/bin/activate
+                        pip install --upgrade pip
                         pip install -r requirements.txt
                     '''
                 }
@@ -17,7 +19,8 @@ pipeline {
                 script {
                     sh '''
                         source venv/bin/activate
-                        pytest
+                        export PYTHONPATH=$PYTHONPATH:$(pwd)/..
+                        pytest tests/test_analysis.py
                     '''
                 }
             }
