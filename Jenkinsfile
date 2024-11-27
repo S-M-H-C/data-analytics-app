@@ -52,5 +52,16 @@ pipeline {
                 }
             }
         }
+        stage('Get Minikube IP and Port') {
+            steps {
+                script {
+                    sh '''
+                        MINIKUBE_IP=$(minikube ip)
+                        NODE_PORT=$(kubectl get svc myapp-service -o=jsonpath='{.spec.ports[0].nodePort}')
+                        echo "Application is accessible at http://$MINIKUBE_IP:$NODE_PORT"
+                    '''
+                }
+            }
+        }
     }
 }
